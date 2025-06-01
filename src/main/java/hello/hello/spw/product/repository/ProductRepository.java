@@ -1,8 +1,7 @@
-package hello.hello.spw.product.Repository;
+package hello.hello.spw.product.repository;
 
 import java.util.List;
 
-import org.springframework.core.SpringVersion;
 import org.springframework.stereotype.Repository;
 
 import hello.hello.spw.product.entity.Product;
@@ -15,11 +14,11 @@ public class ProductRepository {
 	private final EntityManager em;
 
 	public void save(Product product) {
-		if (product.getProduct_id() == null){
-			em.persist(product);
-		}else{
-			em.merge(product);
-		}
+		 if (product.getProductId() == null){
+			 em.persist(product);
+		 }else{
+			 em.merge(product);
+		 }
 	}
 
 	public Product findOne(Long id){
