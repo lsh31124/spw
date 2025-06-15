@@ -12,16 +12,16 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 public class Delivery {
 	@Id
 	@GeneratedValue
 	@Column(name = "delivery_id")
 	private Long id;
-
+	@Setter
 	@OneToOne(mappedBy = "delivery")
 	private Order order;
 
+	@Setter
 	@Enumerated(EnumType.STRING)
 	private DeliveryStatus deliveryStatus; //READY, COMP
 }

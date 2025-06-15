@@ -8,8 +8,9 @@ import hello.hello.spw.order.entity.Order;
 import hello.hello.spw.payment.entity.Payment;
 import hello.hello.spw.product.exception.NotEnoughStockException;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -21,24 +22,26 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "product")
-@Getter @Setter
+@Getter
 public class Product {
 	@Id
 	@GeneratedValue
-	private Long productId;
+	private Long  productId;
 
+	@Setter
 	private String productName;
 
+	@Setter
 	private int productCnt;
 
+	@Setter
 	private int inventory;
 
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-	private List<Payment> payments = new ArrayList<>();
-
 	@ManyToOne
-	@JoinColumn(name = "order_id")
+	@JoinColumn(name = "order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@Setter
 	private Order order;
+
 
 	//==생성 메서드==//
 	public static Product createProduct(String productName, int productCnt ,int inventory){
@@ -51,22 +54,11 @@ public class Product {
 	}
 
 
-	Product products =new Product();
+
 	//==비즈니스 로직==//
 	public void cancel() {
+		Product products =new Product();
 		products.addStock(productCnt);
-	}
-
-	//조회 로직
-	/*
-	 * 전체 주문 가격 조회
-	 */
-	public int getTotalPrice(){
-		int totalPrice =0;
-		for (Payment payment :payments){
-			totalPrice += payment.getTotalPrice();
-		}
-		return totalPrice;
 	}
 /**
  * stock 증가

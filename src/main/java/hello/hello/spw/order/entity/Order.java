@@ -1,4 +1,4 @@
-package hello.hello.spw.order.entity;
+ package hello.hello.spw.order.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,9 +8,11 @@ import hello.hello.spw.payment.entity.Payment;
 import hello.hello.spw.product.entity.Product;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -23,35 +25,41 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "orders")
-@Getter @Setter
+@Getter
 public class Order {
 	@Id
 	@GeneratedValue
 	@Column(name = "order_id")
 	private Long id;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private List<Product> products = new ArrayList<>();
-
-
+	@Setter
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
 
-	@OneToOne
-	@JoinColumn(name = "delivery_id")
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "delivery_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Delivery delivery;
 
-	private int orderCnt;
 
 	private LocalDateTime deliveryDate;
-
+	@Setter
 	private LocalDateTime orderTime;
 
+	@OneToMany
+	@JoinColumn(name = "order", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private List<Product> products = new ArrayList<>();
+
+	@OneToMany
+	@JoinColumn(name = "order", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private List<Payment> payments = new ArrayList<>();
+
 	//==연관관계 메서드==//
-	public void addProduct(Product product){
-		products.add(product);
-		product.setOrder(this);
-	}
+
+	 public void addProduct(Product product){
+		 products.add(product);
+	 	product.setOrder(this);
+	 }
 
 	public void setDelivery(Delivery delivery) {
 		this.delivery = delivery;
@@ -59,13 +67,13 @@ public class Order {
 	}
 
  	//==생성 메서드==//
-	public static Order createOrder(Delivery delivery, OrderStatus orderStatus, int orderCnt, LocalDateTime deliveryDate,Product... products){
+
+	public static Order createOrder(Delivery delivery, LocalDateTime deliveryDate,Product... products){
 		Order order = new Order();
 		order.setDelivery(delivery);
 		for (Product product : products) {
 			order.addProduct(product);
 		}
-		order.orderCnt      = orderCnt;
 		order.deliveryDate  = deliveryDate;
 		order.setOrderStatus(OrderStatus.ORDER);
 		order.setOrderTime(LocalDateTime.now());
@@ -82,6 +90,18 @@ public class Order {
 			product.cancel();
 
 		}
+	}
+
+	//조회 로직
+	/*
+	 * 전체 주문 가격 조회
+	 */
+	public int getTotalPrice(){
+		int totalPrice =0;
+		for (Payment payment : payments){
+			totalPrice += payment.getTotalPrice();
+		}
+		return totalPrice;
 	}
 
 }
