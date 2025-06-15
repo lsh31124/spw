@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import jakarta.persistence.EntityManager;
 @Transactional
 public class OrderServiceTest {
 
+	private static final Logger log = LoggerFactory.getLogger(OrderServiceTest.class);
 	@Autowired EntityManager em;
 	@Autowired OrderService orderService;
 	@Autowired OrderRepository orderRepository;
@@ -34,12 +37,13 @@ public class OrderServiceTest {
 
 		Payment payment = new Payment();
 		payment.setPaymentCnt(10);
-		payment.setPrice(2000);
-		payment.setPaymentCnt(20);
+		payment.setPrice(10000);
 		em.persist(payment);
+
 		int paymentCnt =2;
 
-		Order order = new Order();
+		Order order =new Order();
+
 		//when
 
 		Long orderId = orderService.order(product.getProductId(),payment.getPayId(),order.getId(),paymentCnt);
@@ -47,6 +51,9 @@ public class OrderServiceTest {
 		Order getOrder = orderRepository.findOne(orderId);
 
 		assertEquals(OrderStatus.ORDER, getOrder.getOrderStatus(), "상품 주문시 상태는 ORDER");
+		assertEquals(1,getOrder.getProducts().size(),"주문한 상품 종류가 정확해야 한다");
+		//assertEquals(10000 * paymentCnt,getOrder.getTotalPrice(),"주문 가격은 가격 * 수량이다");
+		// assertEquals("주문 수량만큼 재고가 줄어야 한다",getOr);
 	}
 
 	@Test
