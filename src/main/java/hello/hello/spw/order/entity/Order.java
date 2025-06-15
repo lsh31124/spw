@@ -37,7 +37,7 @@ public class Order {
 	private OrderStatus orderStatus;
 
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name = "delivery_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Delivery delivery;
 
@@ -47,11 +47,11 @@ public class Order {
 	private LocalDateTime orderTime;
 
 	@OneToMany
-	@JoinColumn(name = "order", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(name = "order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private List<Product> products = new ArrayList<>();
 
 	@OneToMany
-	@JoinColumn(name = "order", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(name = "order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private List<Payment> payments = new ArrayList<>();
 
 	//==연관관계 메서드==//
