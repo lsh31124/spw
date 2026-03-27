@@ -1,1 +1,4 @@
-rootProject.name = 'hello.spring'
+rootProject.name = 'spw'
+include 'order','payment', 'product'
+
+
